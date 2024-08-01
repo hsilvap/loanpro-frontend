@@ -53,3 +53,21 @@ export const calculate = async (data: CalculateBody) => {
   }
   return response.json();
 };
+
+export const deleteRecord = async (id: string) => {
+  const token = await getAccesToken();
+  const response = await fetch(
+    `${import.meta.env.VITE_APP_BASE_API_URL}/v1/records/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Network response was not ok");
+  }
+};
