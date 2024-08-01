@@ -18,6 +18,7 @@ import { Order } from "../../components/Table/TableHead";
 import { deleteRecord } from "../../api/records";
 import useGetRecords from "../../hooks/useGetRecords";
 import useGetOperations from "../../hooks/useGetOperations";
+import useDebounce from "../../hooks/useDebounce";
 
 export type RecordTable = Partial<Record> & { type: string };
 
@@ -71,10 +72,13 @@ const Records = () => {
   const { data: operations = [], isLoading: isOperationsLoading } =
     useGetOperations();
   const [order, setOrder] = React.useState<Order>("asc");
+  const [search, setSearch] = React.useState("");
   const [orderBy, setOrderBy] = React.useState<keyof RecordTable>("id");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [recordToDelete, setRecordToDelete] = React.useState<string>("");
+  const debouncedSearchTerm = useDebounce(search, 300);
+
   const {
     data = {} as PaginatedData<Record>,
     isLoading,
@@ -84,12 +88,13 @@ const Records = () => {
     page: (page + 1).toString(),
     sort_by: orderBy,
     sort_order: order,
+    search: debouncedSearchTerm,
   });
 
   const isDataLoading = isLoading || isOperationsLoading;
   const rows = React.useMemo(() => {
     if (isDataLoading) return [];
-    return data.records.map((record: Record) => ({
+    return data.data.map((record: Record) => ({
       ...record,
       type: operations.find((x) => x.id === record.operation_id)?.type,
     }));
@@ -131,11 +136,16 @@ const Records = () => {
     <>
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
-          {isDataLoading ? (
-            "Loading"
-          ) : (
-            <>
-              <TextField label="Filter by amount" fullWidth />
+          <>
+            <TextField
+              label="Search"
+              fullWidth
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {isDataLoading ? (
+              "Loading"
+            ) : (
               <Table
                 headCells={headCells}
                 title="Records"
@@ -150,8 +160,8 @@ const Records = () => {
                 handleChangePage={handleChangePage}
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
               />
-            </>
-          )}
+            )}
+          </>
         </Paper>
       </Box>
       <Dialog open={!!recordToDelete} onClose={handleClose}>

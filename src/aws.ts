@@ -35,3 +35,12 @@ export const getAccesToken = async () => {
     console.log(err);
   }
 };
+
+export const getIdToken = async () => {
+  try {
+    const { idToken } = (await fetchAuthSession()).tokens ?? {};
+    return idToken;
+  } catch (err) {
+    console.log(err);
+  }
+};

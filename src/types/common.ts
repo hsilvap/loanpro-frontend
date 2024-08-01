@@ -3,8 +3,7 @@ export type PaginatedData<T> = {
   pages: number;
   per_page: number;
   total: number;
-  //rename to data
-  records: T[];
+  data: T[];
 };
 
 export type PaginatedRequest = {
@@ -12,4 +11,6 @@ export type PaginatedRequest = {
   sort_order: string;
   page: string;
   per_page: string;
+  search?: string;
+  user_id?: string;
 };

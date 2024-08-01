@@ -1,11 +1,19 @@
-import { currentSession, getAccesToken } from "../aws";
+import { currentSession, getIdToken } from "../aws";
 import { PaginatedRequest } from "../types/common";
 
 export const getRecords = async (params?: PaginatedRequest) => {
-  const queryString = params
-    ? `?${new URLSearchParams(params).toString()}`
-    : "";
-  const token = await getAccesToken();
+  let queryString = "";
+  if (params) {
+    const session = await currentSession();
+    const paramsToUse = {
+      ...params,
+      user_id:
+        (session?.tokens?.idToken?.payload?.["custom:user_id"] as string) ?? "",
+    };
+    queryString = `?${new URLSearchParams(paramsToUse).toString()}`;
+  }
+
+  const token = await getIdToken();
   const response = await fetch(
     `${import.meta.env.VITE_APP_BASE_API_URL}/v1/records${queryString}`,
     {
@@ -28,7 +36,7 @@ type CalculateBody = {
   second_input?: number;
 };
 export const calculate = async (data: CalculateBody) => {
-  const token = await getAccesToken();
+  const token = await getIdToken();
   const session = await currentSession();
 
   const payload = {
@@ -55,7 +63,7 @@ export const calculate = async (data: CalculateBody) => {
 };
 
 export const deleteRecord = async (id: string) => {
-  const token = await getAccesToken();
+  const token = await getIdToken();
   const response = await fetch(
     `${import.meta.env.VITE_APP_BASE_API_URL}/v1/records/${id}`,
     {

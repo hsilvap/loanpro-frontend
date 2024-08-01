@@ -1,7 +1,7 @@
-import { getAccesToken } from "../aws";
+import { getIdToken } from "../aws";
 
 export const getOperations = async () => {
-  const token = await getAccesToken();
+  const token = await getIdToken();
   const response = await fetch(
     `${import.meta.env.VITE_APP_BASE_API_URL}/v1/operations`,
     {
