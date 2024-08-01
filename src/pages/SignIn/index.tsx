@@ -53,6 +53,7 @@ const SignIn = () => {
       <Typography variant="h4">Welcome</Typography>
       <TextField
         required
+        data-testid="email"
         id="email"
         label="Email"
         value={email}
@@ -60,6 +61,7 @@ const SignIn = () => {
       />
       <TextField
         required
+        data-testid="password"
         type="password"
         id="password"
         label="Password"
@@ -72,6 +74,7 @@ const SignIn = () => {
         disabled={invalid || loading}
         variant="contained"
         onClick={handleSignIn}
+        data-testid="submit-btn"
       >
         Sign in
       </Button>

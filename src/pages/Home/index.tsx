@@ -94,7 +94,9 @@ const Home = () => {
             onChange={(e) => setFirstAmount(e.target.value)}
             required
             id="amount"
+            data-testid="amount"
             label="First Amount"
+            data-test
             type="number"
           />
           {selectedOperation && selectedOperation.type !== "square_root" && (
@@ -103,6 +105,7 @@ const Home = () => {
               onChange={(e) => setSecondAmount(e.target.value)}
               required
               id="secondAmount"
+              data-testid="secondAmount"
               label="Second Amount"
               type="number"
             />
